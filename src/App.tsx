@@ -1,47 +1,15 @@
-import { useEffect, useState } from 'react'
-import { graphql } from './lib/magentoClient'
-import './App.css'
+import { Routes, Route } from 'react-router-dom'
+import { Layout } from './components/Layout'
+import { ProductListPage } from './pages/ProductListPage'
+import { ProductPage } from './pages/ProductPage'
 
-function App() {
-  const [storeName, setStoreName] = useState('Magento API is loading...')
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    async function load() {
-      try {
-        type StoreConfigData = {
-          storeConfig: {
-            store_name: string
-          }
-        }
-        const data = await graphql<StoreConfigData>(`
-        {
-          storeConfig {
-            store_name
-          }
-        }
-      `)
-
-        setStoreName(data.storeConfig.store_name)
-
-      } catch (e) {
-        if (e instanceof Error) {
-          setError(e.message)
-        } else {
-          setError('Unknown error')
-        }
-      }
-    }
-    load()
-  }, [])
-
+export default function App() {
   return (
-    <>
-      <h1>Magento + React</h1>
-      {error && <p>Помилка: {error}</p>}
-      <p>Магазин: {storeName}</p>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<ProductListPage />} />
+        <Route path="product/:urlKey" element={<ProductPage />} />
+      </Route>
+    </Routes>
   )
 }
-
-export default App
