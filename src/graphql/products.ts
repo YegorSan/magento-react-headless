@@ -18,9 +18,9 @@ export const PRODUCTS_QUERY = `
 `
 
 export const PRODUCTS_BY_CATEGORY_QUERY = `
-  query ProductsByCategory($categoryId: String!) {
+  query ProductsByCategory($categoryIds: [String!]!) {
     products(
-      filter: { category_id: { eq: $categoryId } }
+      filter: { category_id: { in: $categoryIds } }
       pageSize: 12
     ) {
       total_count

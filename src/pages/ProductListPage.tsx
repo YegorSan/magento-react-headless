@@ -23,9 +23,9 @@ export function ProductListPage() {
   if (loading) return <p>Loading products…</p>
   if (error) return <p>Error: {error}</p>
   return (
-    <section>
-      <h1>Products</h1>
-      <ul>
+    <section className="plp">
+      <h1 className="plp__title">Products</h1>
+      <ul className="plp__grid">
         {products.map((product) => (
           <ProductCard key={product.sku} product={product} />
         ))}

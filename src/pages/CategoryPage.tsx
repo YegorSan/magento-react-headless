@@ -33,10 +33,15 @@ export function CategoryPage() {
             throw new Error('Category not found')
           }
           setCategory(found)
-          // Крок B: id категорії → товари
+
+          const categoryIds = [
+            String(found.id),
+            ...(found.children?.map((child) => String(child.id)) ?? []),
+          ]
+          
           const productsData = await graphql<ProductsData>(
             PRODUCTS_BY_CATEGORY_QUERY,
-            { variables: { categoryId: String(found.id) } },
+            { variables: { categoryIds } },
           )
           setProducts(productsData.products.items)
       } catch (e) {
@@ -54,7 +59,7 @@ export function CategoryPage() {
 
   return (
     <section>
-      <h1>Category {urlKey}</h1>
+      <h1>{category?.name ?? urlKey}</h1>
       <ul>
         {products.map((product) => (
           <ProductCard key={product.sku} product={product} />

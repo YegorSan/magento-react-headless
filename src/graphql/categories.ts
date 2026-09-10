@@ -10,6 +10,11 @@ export const CATEGORY_NAV_QUERY = `
         name
         url_path
         url_key
+        children {
+          id
+          name
+          url_key
+        }
       }
     }
   }
@@ -22,6 +27,11 @@ export const CATEGORY_BY_URL_KEY_QUERY = `
       name
       url_key
       url_path
+      children {
+        id
+        name
+        url_key
+      }
     }
   }
 `

@@ -11,3 +11,7 @@ export type CategoryNavItem = {
   export type CategoryListData = {
     categoryList: CategoryNavItem[]
   }
+
+  export type CategoryByUrlKeyData = {
+    categoryList: CategoryNavItem[]
+  }
