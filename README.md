@@ -1,75 +1,72 @@
-# React + TypeScript + Vite
+# Magento React Headless
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Learning / demo storefront: **React + TypeScript + Vite** talking to **Magento 2 GraphQL**.
 
-Currently, two official plugins are available:
+This is a hands-on lab for modern React against a real Magento backend — not a production Flux-class storefront yet.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What works
 
-## React Compiler
+- Product list (home)
+- Category pages (`/category/:urlKey`) with parent + children product filter
+- Product detail (`/product/:urlKey`) via Magento `route(url: …html)`
+- Shared layout + basic Luma-inspired styles
+- Vite dev proxy `/graphql` → local Magento
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Stack
 
-## Expanding the ESLint configuration
+| Layer | Choice |
+|--------|--------|
+| UI | React 19, TypeScript |
+| Bundler | Vite |
+| Routing | react-router-dom |
+| API | Magento GraphQL (`fetch` helper in `src/lib/magentoClient.ts`) |
+| Backend | Magento 2.4.x (local Warden: `https://app.magento-headless.test`) |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 20+ (or current LTS)
+- Running Magento with GraphQL enabled and sample data (or your catalog)
+- Dev proxy target in [`vite.config.ts`](vite.config.ts) pointed at your Magento base URL
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Open `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+GraphQL calls go to `/graphql` and are proxied to Magento (see `server.proxy` in `vite.config.ts`). Change `target` if your Magento host differs.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm run build    # production build
+npm run preview  # serve the build locally
 ```
+
+## Project layout
+
+```text
+src/
+  components/   # Layout, MainNav, ProductCard
+  pages/        # ProductListPage, CategoryPage, ProductPage
+  graphql/      # Query strings
+  types/        # TypeScript types for GraphQL data
+  lib/          # magentoClient (fetch + basic 502 retry)
+```
+
+## Roadmap (honest)
+
+- [x] Catalog: PLP, category, PDP
+- [ ] Stronger nav (dropdown / mobile)
+- [ ] Next.js + SSR for Core Web Vitals (main headless performance story)
+- [ ] Cart / checkout via Magento GraphQL
+
+## Notes
+
+- Client-only SPA: first paint waits on JS + GraphQL. Lighthouse on `vite dev` will look weak; measure `build` + `preview` if you care about scores.
+- Local Magento (Traefik/Varnish) can return intermittent 502 through the Vite proxy; the client retries gateway errors once.
+
+## License
+
+Private learning project for now (`private: true` in `package.json`).
