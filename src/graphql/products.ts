@@ -38,3 +38,23 @@ export const PRODUCTS_BY_CATEGORY_QUERY = `
     }
   }
 `
+
+export const PRODUCT_BY_URL_QUERY = `
+  query ProductByUrl($url: String!) {
+    route(url: $url) {
+      ... on ProductInterface {
+        sku
+        name
+        url_key
+        description { html }
+        short_description { html }
+        image { url label }
+        price_range {
+          minimum_price {
+            regular_price { value currency }
+          }
+        }
+      }
+    }
+  }
+`

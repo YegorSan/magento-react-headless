@@ -21,3 +21,21 @@ export type Money = {
       items: ProductListItem[]
     }
   }
+
+  export type ProductDetail = {
+    sku: string
+    name: string
+    url_key: string
+    description?: { html?: string | null } | null
+    short_description?: { html?: string | null } | null
+    image?: { url?: string | null; label?: string | null } | null
+    price_range: {
+      minimum_price: {
+        regular_price: Money
+      }
+    }
+  }
+  
+  export type ProductByUrlData = {
+    route: ProductDetail | null
+  }

@@ -36,7 +36,6 @@
     padding: 1.5rem 1.25rem 3rem;
   }
   
-  /* temporary: flat MainNav until dropdown step */
   .site-header nav {
     display: flex;
     flex-wrap: wrap;
