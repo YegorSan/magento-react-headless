@@ -3,6 +3,8 @@ import { graphql } from '../lib/magentoClient'
 import { PRODUCTS_QUERY } from '../graphql/products'
 import type { ProductListItem, ProductsData } from '../types/products'
 import { ProductCard } from '../components/ProductCard'
+import './ProductListPage.css'
+
 export function ProductListPage() {
   const [products, setProducts] = useState<ProductListItem[]>([])
   const [error, setError] = useState<string | null>(null)

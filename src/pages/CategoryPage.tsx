@@ -5,8 +5,8 @@ import { PRODUCTS_BY_CATEGORY_QUERY } from '../graphql/products'
 import type { ProductListItem, ProductsData } from '../types/products'
 import { ProductCard } from '../components/ProductCard'
 import { CATEGORY_BY_URL_KEY_QUERY } from '../graphql/categories'
-
 import type { CategoryByUrlKeyData, CategoryNavItem } from '../types/category'
+import './ProductListPage.css'
 
 export function CategoryPage() {
   const { urlKey } = useParams()
@@ -58,9 +58,9 @@ export function CategoryPage() {
   if (error) return <p>Error: {error}</p>
 
   return (
-    <section>
-      <h1>{category?.name ?? urlKey}</h1>
-      <ul>
+    <section className="plp">
+      <h1 className="plp__title">{category?.name ?? urlKey}</h1>
+      <ul className="plp__grid">
         {products.map((product) => (
           <ProductCard key={product.sku} product={product} />
         ))}

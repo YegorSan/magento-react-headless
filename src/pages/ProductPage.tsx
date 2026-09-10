@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { graphql } from '../lib/magentoClient'
 import { PRODUCT_BY_URL_QUERY } from '../graphql/products'
 import type { ProductByUrlData, ProductDetail } from '../types/products'
+import './ProductPage.css'
 
 export function ProductPage() {
   const { urlKey } = useParams()
@@ -55,17 +56,21 @@ export function ProductPage() {
       </div>
       <div className="pdp__info">
         <h1>{product.name}</h1>
-        <p>SKU: {product.sku}</p>
-        <p>
+        <p className="pdp__sku">SKU: {product.sku}</p>
+        <p className="pdp__price">
           {price.value} {price.currency}
         </p>
         {product.short_description?.html ? (
           <div
+            className="pdp__short"
             dangerouslySetInnerHTML={{ __html: product.short_description.html }}
           />
         ) : null}
         {product.description?.html ? (
-          <div dangerouslySetInnerHTML={{ __html: product.description.html }} />
+          <div
+            className="pdp__description"
+            dangerouslySetInnerHTML={{ __html: product.description.html }}
+          />
         ) : null}
       </div>
     </section>
