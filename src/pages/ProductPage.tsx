@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { graphql } from '../lib/magentoClient'
+import { magentoMediaUrl } from '../lib/magentoMediaUrl'
 import { PRODUCT_BY_URL_QUERY } from '../graphql/products'
 import type { ProductByUrlData, ProductDetail } from '../types/products'
 import './ProductPage.css'
@@ -50,8 +51,11 @@ export function ProductPage() {
   return (
     <section className="pdp">
       <div className="pdp__media">
-        {product.image?.url ? (
-          <img src={product.image.url} alt={product.image.label ?? product.name} />
+        {magentoMediaUrl(product.image?.url) ? (
+          <img
+            src={magentoMediaUrl(product.image?.url)}
+            alt={product.image?.label ?? product.name}
+          />
         ) : null}
       </div>
       <div className="pdp__info">

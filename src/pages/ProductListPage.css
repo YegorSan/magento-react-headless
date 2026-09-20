@@ -4,6 +4,12 @@
     font-weight: 600;
     color: var(--text-h);
   }
+
+  .plp__empty {
+    margin: 0;
+    color: var(--text, #555);
+    font-size: 1rem;
+  }
   
   .plp__grid {
     display: grid;

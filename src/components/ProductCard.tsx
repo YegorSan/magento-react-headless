@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { magentoMediaUrl } from '../lib/magentoMediaUrl'
 import type { ProductListItem } from '../types/products'
 import './ProductCard.css'
 
@@ -12,10 +13,10 @@ export function ProductCard({ product }: Props) {
     <li className="product-card">
       <Link className="product-card__link" to={`/product/${product.url_key}`}>
         <div className="product-card__image-wrap">
-          {product.small_image?.url ? (
+          {magentoMediaUrl(product.small_image?.url) ? (
             <img
               className="product-card__image"
-              src={product.small_image.url}
+              src={magentoMediaUrl(product.small_image?.url)}
               alt={product.name}
               width={120}
               height={120}

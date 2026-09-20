@@ -37,8 +37,7 @@ export async function graphql<TData>(
     variables,
   })
 
-  // Local stack (Vite proxy → Traefik/Varnish/PHP) can flap; retry once on gateway errors.
-  const maxAttempts = 2
+  const maxAttempts = 4
   let lastError: Error | null = null
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -51,7 +50,7 @@ export async function graphql<TData>(
 
       if (!response.ok) {
         if (RETRYABLE_STATUS.has(response.status) && attempt < maxAttempts) {
-          await sleep(300)
+          await sleep(400 * attempt)
           continue
         }
         throw new Error(`HTTP error: ${response.status}`)
@@ -72,9 +71,10 @@ export async function graphql<TData>(
       lastError = e instanceof Error ? e : new Error('Unknown error')
       const isNetwork =
         lastError.message.includes('Failed to fetch') ||
-        lastError.message.includes('NetworkError')
+        lastError.message.includes('NetworkError') ||
+        lastError.message.includes('ENOTFOUND')
       if (isNetwork && attempt < maxAttempts) {
-        await sleep(300)
+        await sleep(400 * attempt)
         continue
       }
       throw lastError

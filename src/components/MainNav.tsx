@@ -7,6 +7,7 @@ import type { CategoryListData, CategoryNavItem } from '../types/category'
 export function MainNav() {
   const [categories, setCategories] = useState<CategoryNavItem[]>([])
   const [error, setError] = useState<string | null>(null)
+
   useEffect(() => {
     async function load() {
       try {
@@ -18,7 +19,9 @@ export function MainNav() {
     }
     load()
   }, [])
+
   if (error) return <p>Nav error: {error}</p>
+
   return (
     <nav>
       <Link to="/">Home</Link>
