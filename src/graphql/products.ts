@@ -1,15 +1,19 @@
 export const PRODUCTS_QUERY = `
   {
     products(search: "", pageSize: 12) {
-      total_count
       items {
-        sku
         name
+        sku
         url_key
-        small_image { url }
+        small_image {
+          url
+        }
         price_range {
           minimum_price {
-            regular_price { value currency }
+            regular_price {
+              value
+              currency
+            }
           }
         }
       }
@@ -46,13 +50,23 @@ export const PRODUCT_BY_URL_QUERY = `
         sku
         name
         url_key
-        description { html }
-        short_description { html }
-        image { url label }
+        image {
+          url
+          label
+        }
         price_range {
           minimum_price {
-            regular_price { value currency }
+            regular_price {
+              value
+              currency
+            }
           }
+        }
+        description {
+          html
+        }
+        short_description {
+          html
         }
       }
     }

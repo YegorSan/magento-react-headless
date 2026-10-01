@@ -3,20 +3,15 @@ export const CATEGORY_NAV_QUERY = `
     categoryList(filters: { parent_id: { eq: "2" } }) {
       id
       name
-      url_path
       url_key
-      product_count
       children {
         id
         name
-        url_path
         url_key
-        product_count
         children {
           id
           name
           url_key
-          product_count
         }
       }
     }

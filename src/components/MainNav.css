@@ -1,0 +1,172 @@
+/* Luma-like: top links + dropdown + nested flyout */
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.15rem;
+}
+
+.site-nav > a {
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: var(--text-s);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.site-nav > a:hover {
+  color: var(--color-text-h);
+  background: var(--color-accent-soft);
+  text-decoration: none;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-item > a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: var(--text-s);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.nav-item > a:hover,
+.nav-item:focus-within > a {
+  color: var(--color-text-h);
+  background: var(--color-accent-soft);
+  text-decoration: none;
+}
+
+.nav-item__submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 30;
+  min-width: 12.5rem;
+  margin: 0;
+  padding: 0.45rem var(--space-s) var(--space-s);
+  list-style: none;
+  background: var(--color-surface);
+  background-clip: padding-box;
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: 0 16px 40px -20px rgba(18, 20, 26, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition:
+    opacity 0.18s var(--ease),
+    transform 0.18s var(--ease),
+    visibility 0.18s;
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 0.5rem;
+}
+
+.nav-item:hover > .nav-item__submenu,
+.nav-item:focus-within > .nav-item__submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+
+.nav-item__subitem {
+  position: relative;
+}
+
+.nav-item__subitem > a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+.nav-item__subitem--has-kids > a::after {
+  content: '›';
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+.nav-item__subitem > a:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+/* Level 3: opens to the right; won't expand document width thanks to overflow-x on body */
+.nav-item__submenu--nested {
+  top: 0;
+  left: calc(100% - 0.35rem);
+  right: auto;
+  padding: var(--space-s);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transform: translateX(4px);
+}
+
+/* Near the right edge of viewport — open nested menu to the left instead */
+@media (min-width: 900px) {
+  .nav-item:last-child .nav-item__submenu--nested,
+  .nav-item:nth-last-child(-n + 2) .nav-item__submenu--nested {
+    left: auto;
+    right: calc(100% - 0.35rem);
+    transform: translateX(-4px);
+  }
+
+  .nav-item:last-child .nav-item__subitem:hover > .nav-item__submenu--nested,
+  .nav-item:last-child .nav-item__subitem:focus-within > .nav-item__submenu--nested,
+  .nav-item:nth-last-child(-n + 2) .nav-item__subitem:hover > .nav-item__submenu--nested,
+  .nav-item:nth-last-child(-n + 2) .nav-item__subitem:focus-within > .nav-item__submenu--nested {
+    transform: none;
+  }
+}
+
+.nav-item__subitem:hover > .nav-item__submenu--nested,
+.nav-item__subitem:focus-within > .nav-item__submenu--nested {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+
+.nav-item__submenu--nested a {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+.nav-item__submenu--nested a:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  text-decoration: none;
+}

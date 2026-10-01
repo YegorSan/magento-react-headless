@@ -7,79 +7,30 @@ type GraphQlEnvelope<T> = {
   errors?: GraphQlError[]
 }
 
-type GraphqlOptions = {
-  variables?: Record<string, unknown>
-  token?: string | null
-}
-
-const RETRYABLE_STATUS = new Set([502, 503, 504])
-
-async function sleep(ms: number) {
-  await new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-export async function graphql<TData>(
+export async function graphql<T = unknown>(
   query: string,
-  options: GraphqlOptions = {},
-): Promise<TData> {
-  const { variables, token } = options
-
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  }
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
-
-  const body = JSON.stringify({
-    query,
-    variables,
+  variables?: Record<string, unknown>,
+): Promise<T> {
+  const response = await fetch('/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
   })
 
-  const maxAttempts = 4
-  let lastError: Error | null = null
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const response = await fetch('/graphql', {
-        method: 'POST',
-        headers,
-        body,
-      })
-
-      if (!response.ok) {
-        if (RETRYABLE_STATUS.has(response.status) && attempt < maxAttempts) {
-          await sleep(400 * attempt)
-          continue
-        }
-        throw new Error(`HTTP error: ${response.status}`)
-      }
-
-      const json = (await response.json()) as GraphQlEnvelope<TData>
-
-      if (json.errors?.length) {
-        throw new Error(json.errors.map((err) => err.message).join('; '))
-      }
-
-      if (json.data === undefined || json.data === null) {
-        throw new Error('GraphQL response contains no data')
-      }
-
-      return json.data as TData
-    } catch (e) {
-      lastError = e instanceof Error ? e : new Error('Unknown error')
-      const isNetwork =
-        lastError.message.includes('Failed to fetch') ||
-        lastError.message.includes('NetworkError') ||
-        lastError.message.includes('ENOTFOUND')
-      if (isNetwork && attempt < maxAttempts) {
-        await sleep(400 * attempt)
-        continue
-      }
-      throw lastError
-    }
+  if (!response.ok) {
+    throw new Error(`HTTP error: ${response.status}`)
   }
 
-  throw lastError ?? new Error('GraphQL request failed')
+  const json = (await response.json()) as GraphQlEnvelope<T>
+
+  if (json.errors?.length) {
+    throw new Error(json.errors.map((err) => err.message).join('; '))
+  }
+  if (json.data === undefined || json.data === null) {
+    throw new Error('GraphQL response contains no data')
+  }
+  return json.data
 }

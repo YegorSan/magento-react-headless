@@ -5,31 +5,33 @@ import './ProductCard.css'
 
 type Props = {
   product: ProductListItem
+  priority?: boolean
 }
 
-export function ProductCard({ product }: Props) {
+export function ProductCard({ product, priority = false }: Props) {
   const price = product.price_range.minimum_price.regular_price
+  const imageUrl = magentoMediaUrl(product.small_image?.url)
+
   return (
     <li className="product-card">
-      <Link className="product-card__link" to={`/product/${product.url_key}`}>
-        <div className="product-card__image-wrap">
-          {magentoMediaUrl(product.small_image?.url) ? (
-            <img
-              className="product-card__image"
-              src={magentoMediaUrl(product.small_image?.url)}
-              alt={product.name}
-              width={120}
-              height={120}
-              loading="lazy"
-            />
-          ) : null}
-        </div>
-        <h2 className="product-card__name">{product.name}</h2>
-        <p className="product-card__sku">{product.sku}</p>
-        <p className="product-card__price">
-          {price.value} {price.currency}
-        </p>
+      {imageUrl ? (
+        <img
+          className="product-card__image"
+          src={imageUrl}
+          alt={product.name}
+          width={400}
+          height={400}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+        />
+      ) : null}
+      <Link className="product-card__name" to={`/product/${product.url_key}`}>
+        {product.name}
       </Link>
+      <p className="product-card__price">
+        {price.value} {price.currency}
+      </p>
     </li>
   )
 }

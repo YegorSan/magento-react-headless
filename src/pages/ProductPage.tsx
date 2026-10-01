@@ -1,52 +1,49 @@
-import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { graphql } from '../lib/magentoClient'
-import { magentoMediaUrl } from '../lib/magentoMediaUrl'
 import { PRODUCT_BY_URL_QUERY } from '../graphql/products'
-import type { ProductByUrlData, ProductDetail } from '../types/products'
+import { useEffect, useState } from 'react'
+import { magentoMediaUrl } from '../lib/magentoMediaUrl'
 import './ProductPage.css'
 
+type ProductDetail = {
+  sku: string
+  name: string
+  url_key: string
+  image?: { url?: string | null; label?: string | null } | null
+  price_range: {
+    minimum_price: {
+      regular_price: { value: number; currency: string }
+    }
+  }
+  description?: { html?: string | null } | null
+  short_description?: { html?: string | null } | null
+}
+
 export function ProductPage() {
-  const { urlKey } = useParams()
   const [product, setProduct] = useState<ProductDetail | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { urlKey } = useParams()
 
   useEffect(() => {
     async function load() {
-      if (!urlKey) {
-        setError('Missing product url key')
-        setLoading(false)
-        return
-      }
-
+      if (!urlKey) return
       setLoading(true)
-      setError(null)
-
       try {
-        const url = `${urlKey}.html`
-        const data = await graphql<ProductByUrlData>(PRODUCT_BY_URL_QUERY, {
-          variables: { url },
+        const data = await graphql<{ route: ProductDetail | null }>(PRODUCT_BY_URL_QUERY, {
+          url: `${urlKey}.html`,
         })
-        if (!data.route) {
-          throw new Error('Product not found')
-        }
-        setProduct(data.route)
+        setProduct(data.route ?? null)
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Unknown error')
+        console.error(e)
       } finally {
         setLoading(false)
       }
     }
-
     load()
   }, [urlKey])
 
-  if (loading) return <p>Loading product…</p>
-  if (error) return <p>Error: {error}</p>
-  if (!product) return <p>Product not found</p>
-
-  const price = product.price_range.minimum_price.regular_price
+  if (loading) return <p>Loading…</p>
+  if (!product) return <p>Not found</p>
 
   return (
     <section className="pdp">
@@ -58,11 +55,14 @@ export function ProductPage() {
           />
         ) : null}
       </div>
+  
       <div className="pdp__info">
         <h1>{product.name}</h1>
         <p className="pdp__sku">SKU: {product.sku}</p>
         <p className="pdp__price">
-          {price.value} {price.currency}
+          {product.price_range.minimum_price.regular_price.value}
+          {' '}
+          {product.price_range.minimum_price.regular_price.currency}
         </p>
         {product.short_description?.html ? (
           <div
@@ -79,4 +79,6 @@ export function ProductPage() {
       </div>
     </section>
   )
+
+
 }

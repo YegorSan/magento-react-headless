@@ -9,7 +9,7 @@ import type { ProductListItem, ProductsData } from '../types/products'
 import type { CategoryByUrlKeyData, CategoryNavItem } from '../types/category'
 import { CATEGORY_CMS_BLOCKS, type CmsBlock, type CmsBlocksData } from '../types/cms'
 import { ProductCard } from '../components/ProductCard'
-import './ProductListPage.css'
+import './Home.css'
 import './CategoryPage.css'
 
 export function CategoryPage() {
@@ -38,7 +38,7 @@ export function CategoryPage() {
       try {
         const categoryData = await graphql<CategoryByUrlKeyData>(
           CATEGORY_BY_URL_KEY_QUERY,
-          { variables: { urlKey } },
+          { urlKey },
         )
         if (cancelled) return
 
@@ -56,7 +56,7 @@ export function CategoryPage() {
 
         if (uniqueIds.length > 0) {
           const blocksData = await graphql<CmsBlocksData>(CMS_BLOCKS_QUERY, {
-            variables: { identifiers: uniqueIds },
+            identifiers: uniqueIds,
           })
           if (cancelled) return
           setCmsBlocks(
@@ -72,7 +72,7 @@ export function CategoryPage() {
         ]
 
         const productsData = await graphql<ProductsData>(PRODUCTS_BY_CATEGORY_QUERY, {
-          variables: { categoryIds },
+          categoryIds,
         })
         if (cancelled) return
 
@@ -91,7 +91,7 @@ export function CategoryPage() {
     }
   }, [urlKey])
 
-  if (loading) return <p>Loading category...</p>
+  if (loading) return <p>Loading category…</p>
   if (error) return <p>Error: {error}</p>
 
   const hasCms = cmsBlocks.length > 0
